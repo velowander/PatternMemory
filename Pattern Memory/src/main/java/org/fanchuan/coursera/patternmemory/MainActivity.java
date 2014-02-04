@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +17,13 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        List<Button> deviceButtons = new ArrayList<Button>();
-        deviceButtons.add((Button) findViewById(R.id.buttonGreen));
-        deviceButtons.add((Button) findViewById(R.id.buttonRed));
-        deviceButtons.add((Button) findViewById(R.id.buttonBlue));
-        deviceButtons.add((Button) findViewById(R.id.buttonYellow));
+        List<View> deviceButtons = new ArrayList<View>();
+        deviceButtons.add(findViewById(R.id.buttonGreen));
+        deviceButtons.add(findViewById(R.id.buttonRed));
+        deviceButtons.add(findViewById(R.id.buttonBlue));
+        deviceButtons.add(findViewById(R.id.buttonYellow));
         SimonController simonCon = new SimonController(deviceButtons);
-        List<Button> melody = new ArrayList<Button>();
+        List<View> melody = new ArrayList<View>();
         simonCon.melodyAddRandom(melody, 8);
         Log.v(TAG, "Count of melody: " + melody.size());
         simonCon.playMelody(melody);
@@ -49,40 +48,40 @@ public class MainActivity extends ActionBarActivity {
     }
 
     protected class SimonController implements View.OnClickListener {
-        //Passing a List of the device's Button objects is required; then this class adds itself as a click listener.
-        protected SimonController(List<Button> deviceButtons) {
+        //Passing a List of the device's View (could be Button) objects is required; then this class adds itself as a click listener.
+        protected SimonController(List<View> deviceButtons) {
             super();
             this.deviceButtons = deviceButtons;
-            for (Button deviceButton: deviceButtons) {
+            for (View deviceButton : deviceButtons) {
                 deviceButton.setOnClickListener(this);
             }
         }
         final int playDurationMs = 600; // How long the computer presses the buttons during playback
         final int pauseDurationMs = 200; // How long the computer pauses between playback button presses
-        private List<Button> deviceButtons;
+        private List<View> deviceButtons;
         private final java.util.Random rand = new java.util.Random();
         public void onClick(View vw) {
 
         }
 
-        protected void playOneButton(final Button BTN) {
-            BTN.setPressed(true); //if doesn't redraw on API10, add BTN.invalidate()!
-            BTN.postDelayed(new Runnable() {
+        protected void playOneButton(final View VW) {
+            VW.setPressed(true); //if doesn't redraw on API10, add BTN.invalidate()!
+            VW.postDelayed(new Runnable() {
                 public void run() {
-                    BTN.setPressed(false);
+                    VW.setPressed(false);
                 }
             }, playDurationMs);
         }
 
-        protected boolean playMelody(List<Button> melody) {
-            /* In: List of Button objects (notes) to play
+        protected boolean playMelody(List<View> melody) {
+            /* In: List of View objects (notes) to play
             Returns false if the melody won't play, true otherwise */
             int delayMultiplier = 1;
             if (melody == null) return false;
-            for(final Button btnPlay : melody) {
-                btnPlay.postDelayed(new Runnable() {
+            for (final View vwPlay : melody) {
+                vwPlay.postDelayed(new Runnable() {
                     public void run() {
-                        playOneButton(btnPlay);
+                        playOneButton(vwPlay);
                     }
                 }, delayMultiplier * (playDurationMs + pauseDurationMs));
                 delayMultiplier++; //Need this multiplier so that played back notes are consecutive in time
@@ -90,21 +89,21 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
 
-        private void melodyAdder(List<Button> myMelody) {
+        private void melodyAdder(List<View> myMelody) {
             //Typically not called directly as it does not create the iterator for verifying the user's input
             int deviceButtonIndex = rand.nextInt(deviceButtons.size());
             Log.v(TAG, "deviceButtonIndex: " + deviceButtonIndex);
             myMelody.add(deviceButtons.get(deviceButtonIndex));
         }
 
-        protected void melodyAddRandom(List<Button> myMelody, int numberToAdd) {
+        protected void melodyAddRandom(List<View> myMelody, int numberToAdd) {
             //Use this method to add Random buttons in bulk.
             for (int i = 0; i < numberToAdd; i++) {
                 melodyAdder(myMelody);
             }
         }
 
-        protected void melodyAddRandom(List<Button> myMelody) {
+        protected void melodyAddRandom(List<View> myMelody) {
             melodyAdder(myMelody);
         }
     }
