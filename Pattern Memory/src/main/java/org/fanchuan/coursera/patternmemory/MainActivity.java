@@ -1,7 +1,8 @@
 package org.fanchuan.coursera.patternmemory;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,7 +15,6 @@ import java.util.List;
 public class MainActivity extends ActionBarActivity {
 
     final String TAG = MainActivity.class.getSimpleName();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,15 +24,12 @@ public class MainActivity extends ActionBarActivity {
         deviceButtons.add((Button) findViewById(R.id.buttonRed));
         deviceButtons.add((Button) findViewById(R.id.buttonBlue));
         deviceButtons.add((Button) findViewById(R.id.buttonYellow));
-        SimonUIController simonUi = new SimonUIController(deviceButtons);
+        SimonController simonCon = new SimonController(deviceButtons);
         List<Button> melody = new ArrayList<Button>();
-        melody.add((Button) findViewById(R.id.buttonRed));
-        melody.add((Button) findViewById(R.id.buttonYellow));
-        melody.add((Button) findViewById(R.id.buttonYellow));
-        melody.add((Button) findViewById(R.id.buttonBlue));
-        simonUi.playMelody(melody);
+        simonCon.melodyAddRandom(melody, 8);
+        Log.v(TAG, "Count of melody: " + melody.size());
+        simonCon.playMelody(melody);
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         
@@ -40,7 +37,6 @@ public class MainActivity extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -53,18 +49,21 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    protected class SimonUIController implements View.OnClickListener {
+    protected class SimonController implements View.OnClickListener {
         //Passing a List of the device's Button objects is required; then this class adds itself as a click listener.
-        protected SimonUIController(List<Button> deviceButtons) {
+        protected SimonController(List<Button> deviceButtons) {
             super();
             this.deviceButtons = deviceButtons;
             for (Button deviceButton: deviceButtons) {
                 deviceButton.setOnClickListener(this);
             }
         }
-        final int playDurationMs = 800; // How long the computer presses the buttons during playback
+
+        final int playDurationMs = 600; // How long the computer presses the buttons during playback
         final int pauseDurationMs = 200; // How long the computer pauses between playback button presses
         private List<Button> deviceButtons;
+        private final java.util.Random rand = new java.util.Random();
+
         public void onClick(View vw) {
             String toastText = "NONE";
             switch (vw.getId()) {
@@ -81,7 +80,7 @@ public class MainActivity extends ActionBarActivity {
                     toastText = "blue";
                     break;
             }
-            Toast.makeText(MainActivity.this, toastText, Toast.LENGTH_SHORT).show();
+            Toast.makeText(vw.getContext(), toastText, Toast.LENGTH_SHORT).show();
         }
         private void playOneButton (final Button BTN) {
             BTN.setPressed(true); //if doesn't redraw on API10, add BTN.invalidate()!
@@ -91,9 +90,12 @@ public class MainActivity extends ActionBarActivity {
                 }
             }, playDurationMs);
         }
-        private void playMelody (List<Button> melody) {
-            int delayMultiplier = 1;
 
+        private boolean playMelody(List<Button> melody) {
+            /* In: List of Button objects (notes) to play
+            Returns false if the melody won't play, true otherwise */
+            int delayMultiplier = 1;
+            if (melody == null) return false;
             for(final Button btnPlay : melody) {
                 btnPlay.postDelayed(new Runnable() {
                     public void run() {
@@ -102,8 +104,20 @@ public class MainActivity extends ActionBarActivity {
                 }, delayMultiplier * (playDurationMs + pauseDurationMs));
                 delayMultiplier++; //Need this multiplier so that played back notes are consecutive in time
             }
+            return true;
+        }
 
+        private void melodyAddRandom(List<Button> myMelody, int numberToAdd) {
+            //Use this method to add Random buttons in bulk.
+            for (int i = 0; i < numberToAdd; i++) {
+                melodyAddRandom(myMelody);
+            }
+        }
+
+        private void melodyAddRandom(List<Button> myMelody) {
+            int deviceButtonIndex = rand.nextInt(deviceButtons.size());
+            Log.v(TAG, "deviceButtonIndex: " + deviceButtonIndex);
+            myMelody.add(deviceButtons.get(deviceButtonIndex));
         }
     }
-
 }
