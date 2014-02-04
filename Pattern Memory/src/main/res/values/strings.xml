@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Pattern Memory</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="begin_game_button">Begin Game</string>
     <string name="action_settings">Settings</string>
 
 </resources>

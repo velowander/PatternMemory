@@ -6,35 +6,46 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
 
     final String TAG = MainActivity.class.getSimpleName();
+    Simon simon;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
+
+    public void onClickBeginGame(View vw) {
+        simon = initializeSimon();
+        simon.noteRandomAdd(6);
+        simon.play();
+    }
+
+    protected Simon initializeSimon() {
         List<View> deviceButtons = new ArrayList<View>();
         deviceButtons.add(findViewById(R.id.buttonGreen));
         deviceButtons.add(findViewById(R.id.buttonRed));
         deviceButtons.add(findViewById(R.id.buttonBlue));
         deviceButtons.add(findViewById(R.id.buttonYellow));
-        SimonController simonCon = new SimonController(deviceButtons);
-        List<View> melody = new ArrayList<View>();
-        simonCon.melodyAddRandom(melody, 8);
-        Log.v(TAG, "Count of melody: " + melody.size());
-        simonCon.playMelody(melody);
+        return new Simon(deviceButtons);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -47,24 +58,31 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    protected class SimonController implements View.OnClickListener {
+    protected class Simon implements View.OnClickListener {
+        final int playDurationMs = 600; // How long the computer presses the buttons during playback
+        final int pauseDurationMs = 200; // How long the computer pauses between playback button presses
+        private final java.util.Random rand = new java.util.Random();
+        private List<View> playList = new ArrayList<View>();
+        private List<View> deviceButtons;
+        private Iterator playListIterator; //used to verify user is playing melody correctly
+
         //Passing a List of the device's View (could be Button) objects is required; then this class adds itself as a click listener.
-        protected SimonController(List<View> deviceButtons) {
+        protected Simon(List<View> deviceButtons) {
             super();
             this.deviceButtons = deviceButtons;
             for (View deviceButton : deviceButtons) {
                 deviceButton.setOnClickListener(this);
             }
         }
-        final int playDurationMs = 600; // How long the computer presses the buttons during playback
-        final int pauseDurationMs = 200; // How long the computer pauses between playback button presses
-        private List<View> deviceButtons;
-        private final java.util.Random rand = new java.util.Random();
-        public void onClick(View vw) {
 
+        public void onClick(View vw) {
+            if (!simon.verifyButtonPress(vw))
+                Toast.makeText(vw.getContext(), "Loser!", Toast.LENGTH_SHORT);
+            else
+                Toast.makeText(vw.getContext(), "OK", Toast.LENGTH_SHORT);
         }
 
-        protected void playOneButton(final View VW) {
+        protected void playOne(final View VW) {
             VW.setPressed(true); //if doesn't redraw on API10, add BTN.invalidate()!
             VW.postDelayed(new Runnable() {
                 public void run() {
@@ -73,15 +91,15 @@ public class MainActivity extends ActionBarActivity {
             }, playDurationMs);
         }
 
-        protected boolean playMelody(List<View> melody) {
+        protected boolean play() {
             /* In: List of View objects (notes) to play
             Returns false if the melody won't play, true otherwise */
             int delayMultiplier = 1;
-            if (melody == null) return false;
-            for (final View vwPlay : melody) {
+            if (playList == null) return false;
+            for (final View vwPlay : playList) {
                 vwPlay.postDelayed(new Runnable() {
                     public void run() {
-                        playOneButton(vwPlay);
+                        playOne(vwPlay);
                     }
                 }, delayMultiplier * (playDurationMs + pauseDurationMs));
                 delayMultiplier++; //Need this multiplier so that played back notes are consecutive in time
@@ -89,22 +107,38 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
 
-        private void melodyAdder(List<View> myMelody) {
+        private void noteRandomAdder() {
             //Typically not called directly as it does not create the iterator for verifying the user's input
             int deviceButtonIndex = rand.nextInt(deviceButtons.size());
             Log.v(TAG, "deviceButtonIndex: " + deviceButtonIndex);
-            myMelody.add(deviceButtons.get(deviceButtonIndex));
+            playList.add(deviceButtons.get(deviceButtonIndex));
         }
 
-        protected void melodyAddRandom(List<View> myMelody, int numberToAdd) {
+        protected void noteRandomAdd(int numberToAdd) {
             //Use this method to add Random buttons in bulk.
             for (int i = 0; i < numberToAdd; i++) {
-                melodyAdder(myMelody);
+                noteRandomAdder();
             }
+            playListIterator = playList.iterator();
         }
 
-        protected void melodyAddRandom(List<View> myMelody) {
-            melodyAdder(myMelody);
+        protected void noteRandomAdd() {
+            noteRandomAdder();
+            playListIterator = playList.iterator();
+        }
+
+        protected void setPlayList(List<View> myPlayList) {
+            this.playList = myPlayList;
+        }
+
+        boolean verifyButtonPress(View vw) {
+            /* Verify the button pressed by the user - is it part of the melody?
+            Return true if part of melody, false otherwise */
+            if (playListIterator.hasNext())
+                return vw == playListIterator.next();
+            else
+                return false; //user pressed too many keys, LOSER!!
         }
     }
+
 }
