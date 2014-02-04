@@ -7,7 +7,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,31 +57,15 @@ public class MainActivity extends ActionBarActivity {
                 deviceButton.setOnClickListener(this);
             }
         }
-
         final int playDurationMs = 600; // How long the computer presses the buttons during playback
         final int pauseDurationMs = 200; // How long the computer pauses between playback button presses
         private List<Button> deviceButtons;
         private final java.util.Random rand = new java.util.Random();
-
         public void onClick(View vw) {
-            String toastText = "NONE";
-            switch (vw.getId()) {
-                case R.id.buttonGreen:
-                    toastText = "green";
-                    break;
-                case R.id.buttonRed:
-                    toastText = "red";
-                    break;
-                case R.id.buttonYellow:
-                    toastText = "yellow";
-                    break;
-                case R.id.buttonBlue:
-                    toastText = "blue";
-                    break;
-            }
-            Toast.makeText(vw.getContext(), toastText, Toast.LENGTH_SHORT).show();
+
         }
-        private void playOneButton (final Button BTN) {
+
+        protected void playOneButton(final Button BTN) {
             BTN.setPressed(true); //if doesn't redraw on API10, add BTN.invalidate()!
             BTN.postDelayed(new Runnable() {
                 public void run() {
@@ -91,7 +74,7 @@ public class MainActivity extends ActionBarActivity {
             }, playDurationMs);
         }
 
-        private boolean playMelody(List<Button> melody) {
+        protected boolean playMelody(List<Button> melody) {
             /* In: List of Button objects (notes) to play
             Returns false if the melody won't play, true otherwise */
             int delayMultiplier = 1;
@@ -107,17 +90,22 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
 
-        private void melodyAddRandom(List<Button> myMelody, int numberToAdd) {
-            //Use this method to add Random buttons in bulk.
-            for (int i = 0; i < numberToAdd; i++) {
-                melodyAddRandom(myMelody);
-            }
-        }
-
-        private void melodyAddRandom(List<Button> myMelody) {
+        private void melodyAdder(List<Button> myMelody) {
+            //Typically not called directly as it does not create the iterator for verifying the user's input
             int deviceButtonIndex = rand.nextInt(deviceButtons.size());
             Log.v(TAG, "deviceButtonIndex: " + deviceButtonIndex);
             myMelody.add(deviceButtons.get(deviceButtonIndex));
+        }
+
+        protected void melodyAddRandom(List<Button> myMelody, int numberToAdd) {
+            //Use this method to add Random buttons in bulk.
+            for (int i = 0; i < numberToAdd; i++) {
+                melodyAdder(myMelody);
+            }
+        }
+
+        protected void melodyAddRandom(List<Button> myMelody) {
+            melodyAdder(myMelody);
         }
     }
 }
