@@ -77,9 +77,9 @@ public class MainActivity extends ActionBarActivity {
 
         public void onClick(View vw) {
             if (!simon.verifyButtonPress(vw))
-                Toast.makeText(vw.getContext(), "Loser!", Toast.LENGTH_SHORT);
+                Toast.makeText(vw.getContext(), "Loser!", Toast.LENGTH_SHORT).show();
             else
-                Toast.makeText(vw.getContext(), "OK", Toast.LENGTH_SHORT);
+                Toast.makeText(vw.getContext(), "OK", Toast.LENGTH_SHORT).show();
         }
 
         protected void playOne(final View VW) {
