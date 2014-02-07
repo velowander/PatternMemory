@@ -29,7 +29,8 @@ public class MainActivity extends ActionBarActivity {
         TextView tvwScore = (TextView) findViewById(R.id.tvwScore);
         tvwScore.setText(Integer.toString(0));
         simon = initializeSimon();
-        simon.noteRandomAdd();
+        SimonListener listener = new SimonListener(simon);
+        simon.noteRandomAdd(4);
         simon.play();
     }
 
@@ -62,12 +63,9 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    protected class Simon implements View.OnClickListener {
+    private class Simon {
         final int PLAY_DURATION_MS = 600; // How long the computer presses the buttons during playback
         final int PAUSE_DURATION_MS = 200; // How long the computer pauses between playback button presses
-        final short BUTTON_INCORRECT = 0; // The last button press does not match the melody iterator
-        final short BUTTON_CORRECT = 1; // Matches the melody iterator but there are more following
-        final short BUTTON_CORRECT_COMPLETED = 2; // Matches the melody iterator and round is complete
         private final java.util.Random rand = new java.util.Random();
         private List<View> playList = new ArrayList<View>();
         private List<View> deviceButtons;
@@ -77,45 +75,16 @@ public class MainActivity extends ActionBarActivity {
         protected Simon(List<View> deviceButtons) {
             super();
             this.deviceButtons = deviceButtons;
-            for (View deviceButton : deviceButtons) {
-                deviceButton.setOnClickListener(this);
-            }
         }
 
-        public void onClick(View vw) {
-            Activity activity = (Activity) vw.getContext();
-            TextView tvwScore = (TextView) activity.findViewById(R.id.tvwScore);
-            if (tvwScore == null)
-                Log.w(TAG, "tvwScore is null");
-
-            if (simon.verifyButtonPress(vw)) {
-                //This button press matches the current one in the Iterator, get a point whether it is the last or not
-                try {
-                    int score = Integer.parseInt(tvwScore.getText().toString());
-                    score++;
-                    tvwScore.setText(Integer.toString(score));
-                } catch (Exception e) {
-                    Log.e(TAG, "Unable to set score", e);
-                }
-                if (!playListIterator.hasNext()) {
-                    //No more buttons to press, at the end of the melody!! Next round.
-
-                    String messageRoundWin = activity.getResources().getString(R.string.message_round_win);
-                    Toast.makeText(activity, messageRoundWin, Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                String messageLose = activity.getResources().getString(R.string.message_lose);
-                Toast.makeText(activity, messageLose, Toast.LENGTH_SHORT).show();
-                gameOver();
-            }
+        protected List<View> getDeviceButtons() {
+            return this.deviceButtons;
         }
 
-        private void gameOver() {
-            for (View deviceButton : deviceButtons) {
-                deviceButton.setOnClickListener(null);
-            }
+        protected boolean hasNext() {
+            //Return true if the current melody iterator has any more notes, false otherwise
+            return playListIterator.hasNext();
         }
-
 
         protected void playOne(final View VW) {
             VW.setPressed(true); //if doesn't redraw on API10, add BTN.invalidate()!
@@ -176,4 +145,53 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    protected class SimonListener implements View.OnClickListener {
+        private List<View> simonButtons;
+        private Simon mySimon;
+
+        protected SimonListener(Simon simon0) {
+            super();
+            this.mySimon = simon0;
+            simonButtons = mySimon.getDeviceButtons();
+            for (View deviceButton : simonButtons) {
+                deviceButton.setOnClickListener(this);
+            }
+        }
+
+        public void onClick(View vw) {
+            Activity activity = (Activity) vw.getContext();
+            TextView tvwScore = (TextView) activity.findViewById(R.id.tvwScore);
+            if (tvwScore == null)
+                Log.w(TAG, "tvwScore is null");
+
+            if (simon.verifyButtonPress(vw)) {
+                //This button press matches the current one in the Iterator, get a point whether it is the last or not
+                try {
+                    int score = Integer.parseInt(tvwScore.getText().toString());
+                    score++;
+                    tvwScore.setText(Integer.toString(score));
+                } catch (Exception e) {
+                    Log.e(TAG, "Unable to set score", e);
+                }
+                if (!mySimon.hasNext()) {
+                    //No more buttons to press, at the end of the melody!! Next round.
+
+                    String messageRoundWin = activity.getResources().getString(R.string.message_round_win);
+                    Toast.makeText(activity, messageRoundWin, Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                String messageLose = activity.getResources().getString(R.string.message_lose);
+                Toast.makeText(activity, messageLose, Toast.LENGTH_SHORT).show();
+                gameOver();
+            }
+        }
+
+        private void gameOver() {
+            for (View deviceButton : simonButtons) {
+                deviceButton.setOnClickListener(null);
+            }
+        }
+
+
+    }
 }
