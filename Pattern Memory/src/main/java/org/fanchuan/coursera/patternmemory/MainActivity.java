@@ -1,11 +1,13 @@
 package org.fanchuan.coursera.patternmemory;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -24,8 +26,10 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void onClickBeginGame(View vw) {
+        TextView tvwScore = (TextView) findViewById(R.id.tvwScore);
+        tvwScore.setText(Integer.toString(0));
         simon = initializeSimon();
-        simon.noteRandomAdd(5);
+        simon.noteRandomAdd();
         simon.play();
     }
 
@@ -59,8 +63,11 @@ public class MainActivity extends ActionBarActivity {
     }
 
     protected class Simon implements View.OnClickListener {
-        final int playDurationMs = 600; // How long the computer presses the buttons during playback
-        final int pauseDurationMs = 200; // How long the computer pauses between playback button presses
+        final int PLAY_DURATION_MS = 600; // How long the computer presses the buttons during playback
+        final int PAUSE_DURATION_MS = 200; // How long the computer pauses between playback button presses
+        final short BUTTON_INCORRECT = 0; // The last button press does not match the melody iterator
+        final short BUTTON_CORRECT = 1; // Matches the melody iterator but there are more following
+        final short BUTTON_CORRECT_COMPLETED = 2; // Matches the melody iterator and round is complete
         private final java.util.Random rand = new java.util.Random();
         private List<View> playList = new ArrayList<View>();
         private List<View> deviceButtons;
@@ -76,16 +83,29 @@ public class MainActivity extends ActionBarActivity {
         }
 
         public void onClick(View vw) {
+            Activity activity = (Activity) vw.getContext();
+            TextView tvwScore = (TextView) activity.findViewById(R.id.tvwScore);
+            if (tvwScore == null)
+                Log.w(TAG, "tvwScore is null");
+
             if (simon.verifyButtonPress(vw)) {
-                //This button press matches the current one in the Iterator
+                //This button press matches the current one in the Iterator, get a point whether it is the last or not
+                try {
+                    int score = Integer.parseInt(tvwScore.getText().toString());
+                    score++;
+                    tvwScore.setText(Integer.toString(score));
+                } catch (Exception e) {
+                    Log.e(TAG, "Unable to set score", e);
+                }
                 if (!playListIterator.hasNext()) {
-                    //No more buttons to press, at the end of the melody!!
-                    String messageRoundWin = getResources().getString(R.string.message_round_win);
-                    Toast.makeText(vw.getContext(), messageRoundWin, Toast.LENGTH_SHORT).show();
+                    //No more buttons to press, at the end of the melody!! Next round.
+
+                    String messageRoundWin = activity.getResources().getString(R.string.message_round_win);
+                    Toast.makeText(activity, messageRoundWin, Toast.LENGTH_SHORT).show();
                 }
             } else {
-                String messageLose = getResources().getString(R.string.message_lose);
-                Toast.makeText(vw.getContext(), messageLose, Toast.LENGTH_SHORT).show();
+                String messageLose = activity.getResources().getString(R.string.message_lose);
+                Toast.makeText(activity, messageLose, Toast.LENGTH_SHORT).show();
                 gameOver();
             }
         }
@@ -103,7 +123,7 @@ public class MainActivity extends ActionBarActivity {
                 public void run() {
                     VW.setPressed(false);
                 }
-            }, playDurationMs);
+            }, PLAY_DURATION_MS);
         }
 
         protected boolean play() {
@@ -116,7 +136,7 @@ public class MainActivity extends ActionBarActivity {
                     public void run() {
                         playOne(vwPlay);
                     }
-                }, delayMultiplier * (playDurationMs + pauseDurationMs));
+                }, delayMultiplier * (PLAY_DURATION_MS + PAUSE_DURATION_MS));
                 delayMultiplier++; //Need this multiplier so that played back notes are consecutive in time
             }
             return true;
