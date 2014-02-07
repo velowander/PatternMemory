@@ -25,7 +25,7 @@ public class MainActivity extends ActionBarActivity {
 
     public void onClickBeginGame(View vw) {
         simon = initializeSimon();
-        simon.noteRandomAdd(6);
+        simon.noteRandomAdd(5);
         simon.play();
     }
 
@@ -76,11 +76,26 @@ public class MainActivity extends ActionBarActivity {
         }
 
         public void onClick(View vw) {
-            if (!simon.verifyButtonPress(vw))
-                Toast.makeText(vw.getContext(), "Loser!", Toast.LENGTH_SHORT).show();
-            else
-                Toast.makeText(vw.getContext(), "OK", Toast.LENGTH_SHORT).show();
+            if (simon.verifyButtonPress(vw)) {
+                //This button press matches the current one in the Iterator
+                if (!playListIterator.hasNext()) {
+                    //No more buttons to press, at the end of the melody!!
+                    String messageRoundWin = getResources().getString(R.string.message_round_win);
+                    Toast.makeText(vw.getContext(), messageRoundWin, Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                String messageLose = getResources().getString(R.string.message_lose);
+                Toast.makeText(vw.getContext(), messageLose, Toast.LENGTH_SHORT).show();
+                gameOver();
+            }
         }
+
+        private void gameOver() {
+            for (View deviceButton : deviceButtons) {
+                deviceButton.setOnClickListener(null);
+            }
+        }
+
 
         protected void playOne(final View VW) {
             VW.setPressed(true); //if doesn't redraw on API10, add BTN.invalidate()!
