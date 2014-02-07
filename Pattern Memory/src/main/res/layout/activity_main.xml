@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -16,40 +16,53 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/begin_game_button"
-            android:onClick="onClickBeginGame" />
-
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SCORE " />
+            style="@style/score_bar"
+            android:layout_gravity="right"
+            android:text="@string/score_caption" />
 
         <TextView
             android:id="@+id/tvwScore"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="50dp"
+            style="@style/score_bar"
+            android:layout_gravity="right"
+            android:text="--" />
+
+        <TextView
+            style="@style/score_bar"
+            android:layout_gravity="right"
+            android:text="@string/round_caption" />
+
+        <TextView
+            android:id="@+id/tvwRound"
+            android:layout_width="40dp"
+            style="@style/score_bar"
+            android:layout_gravity="right"
+            android:text="--" />
     </LinearLayout>
+
+    <Button
+        style="@style/score_bar"
+        android:onClick="onClickBeginGame"
+        android:text="@string/begin_game_button" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_weight="0.5">
+        android:layout_weight="0.5"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/buttonGreen"
-            android:layout_height="match_parent"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:background="@drawable/button_green" />
 
         <Button
             android:id="@+id/buttonRed"
-            android:layout_height="match_parent"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:background="@drawable/button_red" />
     </LinearLayout>
@@ -57,20 +70,20 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_weight="0.5">
+        android:layout_weight="0.5"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/buttonYellow"
-            android:layout_height="match_parent"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:background="@drawable/button_yellow" />
 
         <Button
             android:id="@+id/buttonBlue"
-            android:layout_height="match_parent"
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="0.5"
             android:background="@drawable/button_blue" />
 

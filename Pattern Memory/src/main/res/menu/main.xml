@@ -1,10 +1,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="org.fanchuan.coursera.patternmemory.MainActivity" >
-    
+    tools:context="org.fanchuan.coursera.patternmemory.MainActivity">
+
+    <item
+        android:id="@+id/help_action"
+        android:orderInCategory="0"
+        android:title="@string/help_button"
+        app:showAsAction="ifRoom" />
+
+    <!--
+    Settings option not implemented
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
         app:showAsAction="never" />
+    -->
+
 </menu>
