@@ -81,6 +81,8 @@ public class MainActivity extends ActionBarActivity {
         //Passing a List of the device's View (could be Button) objects is required; then this class adds itself as a click listener.
         protected Simon(List<View> deviceButtons) {
             super();
+            if (deviceButtons == null || deviceButtons.size() == 0)
+                throw new IllegalArgumentException();
             this.deviceButtons = deviceButtons;
         }
 
@@ -90,7 +92,11 @@ public class MainActivity extends ActionBarActivity {
 
         protected boolean hasNext() {
             //Return true if the current melody iterator has any more notes, false otherwise
-            return playListIterator.hasNext();
+            try {
+                return playListIterator.hasNext();
+            } catch (NullPointerException e) {
+                return false;
+            }
         }
 
         protected void playOne(final View VW) {
@@ -158,6 +164,8 @@ public class MainActivity extends ActionBarActivity {
 
         protected SimonListener(Simon simon0) {
             super();
+            if (simon0 == null)
+                throw new IllegalArgumentException();
             this.mySimon = simon0;
             simonButtons = mySimon.getDeviceButtons();
             for (View deviceButton : simonButtons) {
