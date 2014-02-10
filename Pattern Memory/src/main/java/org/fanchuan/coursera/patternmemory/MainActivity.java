@@ -12,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
@@ -26,6 +25,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
     }
 
+    @SuppressWarnings("unused")
     public void onClickBeginGame(View vw) {
         simon = initializeSimon();
         SimonListener listener = new SimonListener(simon);
@@ -39,6 +39,7 @@ public class MainActivity extends ActionBarActivity {
         deviceButtons.add(findViewById(R.id.buttonRed));
         deviceButtons.add(findViewById(R.id.buttonBlue));
         deviceButtons.add(findViewById(R.id.buttonYellow));
+        Log.d(TAG, "Simon initialized with device button count: " + deviceButtons.size());
         return new Simon(deviceButtons);
     }
 
@@ -70,120 +71,41 @@ public class MainActivity extends ActionBarActivity {
         help.show();
     }
 
-    private class Simon {
-        final int PLAY_DURATION_MS = 600; // How long the computer presses the buttons during playback
-        final int PAUSE_DURATION_MS = 200; // How long the computer pauses between playback button presses
-        private final java.util.Random rand = new java.util.Random();
-        private List<View> playList = new ArrayList<View>();
-        private List<View> deviceButtons;
-        private Iterator playListIterator; //used to verify user is playing melody correctly
-
-        //Passing a List of the device's View (could be Button) objects is required; then this class adds itself as a click listener.
-        protected Simon(List<View> deviceButtons) {
-            super();
-            if (deviceButtons == null || deviceButtons.size() == 0)
-                throw new IllegalArgumentException();
-            this.deviceButtons = deviceButtons;
-        }
-
-        protected List<View> getDeviceButtons() {
-            return this.deviceButtons;
-        }
-
-        protected boolean hasNext() {
-            //Return true if the current melody iterator has any more notes, false otherwise
-            try {
-                return playListIterator.hasNext();
-            } catch (NullPointerException e) {
-                return false;
-            }
-        }
-
-        protected void playOne(final View VW) {
-            VW.setPressed(true); //if doesn't redraw on API10, add BTN.invalidate()!
-            VW.postDelayed(new Runnable() {
-                public void run() {
-                    VW.setPressed(false);
-                }
-            }, PLAY_DURATION_MS);
-        }
-
-        protected boolean play() {
-            /* In: List of View objects (notes) to play
-            Returns false if the melody won't play, true otherwise */
-            int delayMultiplier = 1;
-            if (playList == null) return false;
-            for (final View vwPlay : playList) {
-                vwPlay.postDelayed(new Runnable() {
-                    public void run() {
-                        playOne(vwPlay);
-                    }
-                }, delayMultiplier * (PLAY_DURATION_MS + PAUSE_DURATION_MS));
-                delayMultiplier++; //Need this multiplier so that played back notes are consecutive in time
-            }
-            return true;
-        }
-
-        private void noteRandomAdder() {
-            //Typically not called directly as it does not create the iterator for verifying the user's input
-            int deviceButtonIndex = rand.nextInt(deviceButtons.size());
-            Log.v(TAG, "deviceButtonIndex: " + deviceButtonIndex);
-            playList.add(deviceButtons.get(deviceButtonIndex));
-        }
-
-        protected void noteRandomAdd(int numberToAdd) {
-            //Use this method to add Random buttons in bulk.
-            for (int i = 0; i < numberToAdd; i++) {
-                noteRandomAdder();
-            }
-            playListIterator = playList.iterator();
-        }
-
-        protected void noteRandomAdd() {
-            noteRandomAdder();
-            playListIterator = playList.iterator();
-        }
-
-        protected void setPlayList(List<View> myPlayList) {
-            this.playList = myPlayList;
-        }
-
-        boolean verifyButtonPress(View vw) {
-            /* Verify the button pressed by the user - is it part of the melody?
-            Return true if part of melody, false otherwise */
-            if (playListIterator.hasNext())
-                return vw == playListIterator.next();
-            else
-                return false; //user pressed too many keys, LOSER!!
-        }
-    }
-
-    protected class SimonListener implements View.OnClickListener {
+    protected static class SimonListener implements View.OnClickListener {
+        /* Helper class for using Simon; it is closer to the UI implementation as it refers to
+        specific hardcoded UI elements; although still uses the List<View> collection for the buttons.
+         */
+        private String TAG = SimonListener.class.getSimpleName();
         private List<View> simonButtons;
+        private Activity parentActivity;
         private Simon mySimon;
 
         protected SimonListener(Simon simon0) {
-            super();
             if (simon0 == null)
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("must pass a valid Simon instance to constructor");
             this.mySimon = simon0;
-            simonButtons = mySimon.getDeviceButtons();
+            this.simonButtons = mySimon.getDeviceButtons();
+            if (simonButtons.size() == 0)
+                throw new IllegalArgumentException("Simon instance List<View> is empty");
+            try {
+                parentActivity = (Activity) simonButtons.get(0).getContext();
+            } catch (Exception e) {
+                Log.e(TAG, "Unable to get SimonListener instance's parent activity");
+            }
             for (View deviceButton : simonButtons) {
                 deviceButton.setOnClickListener(this);
             }
-            TextView tvwScore = (TextView) findViewById(R.id.tvwScore);
-            TextView tvwRound = (TextView) findViewById(R.id.tvwRound);
+            TextView tvwScore = (TextView) parentActivity.findViewById(R.id.tvwScore);
+            TextView tvwRound = (TextView) parentActivity.findViewById(R.id.tvwRound);
             tvwScore.setText(Integer.toString(0));
             tvwRound.setText(Integer.toString(0));
         }
 
         public void onClick(View vw) {
-            Activity activity = (Activity) vw.getContext();
-
-            if (simon.verifyButtonPress(vw)) {
+            if (mySimon.verifyButtonPress(vw)) {
                 //This button press matches the current one in the Iterator, get a point whether it is the last or not
                 try {
-                    TextView tvwScore = (TextView) activity.findViewById(R.id.tvwScore);
+                    TextView tvwScore = (TextView) parentActivity.findViewById(R.id.tvwScore);
                     if (tvwScore == null)
                         Log.w(TAG, "tvwScore is null");
                     int score = Integer.parseInt(tvwScore.getText().toString());
@@ -195,21 +117,21 @@ public class MainActivity extends ActionBarActivity {
                 if (!mySimon.hasNext()) {
                     //No more buttons to press, at the end of the melody!! Next round.
                     try {
-                        TextView tvwRound = (TextView) activity.findViewById(R.id.tvwRound);
+                        TextView tvwRound = (TextView) parentActivity.findViewById(R.id.tvwRound);
                         int round = Integer.parseInt(tvwRound.getText().toString());
                         round++;
                         tvwRound.setText(Integer.toString(round));
                     } catch (Exception e) {
                         Log.e(TAG, "Unable to set round", e);
                     }
-                    String messageRoundWin = activity.getResources().getString(R.string.message_round_win);
-                    Toast.makeText(activity, messageRoundWin, Toast.LENGTH_SHORT).show();
+                    String messageRoundWin = parentActivity.getResources().getString(R.string.message_round_win);
+                    Toast.makeText(parentActivity, messageRoundWin, Toast.LENGTH_SHORT).show();
                     mySimon.noteRandomAdd();
                     mySimon.play();
                 }
             } else {
-                String messageLose = activity.getResources().getString(R.string.message_lose);
-                Toast.makeText(activity, messageLose, Toast.LENGTH_SHORT).show();
+                String messageLose = parentActivity.getResources().getString(R.string.message_lose);
+                Toast.makeText(parentActivity, messageLose, Toast.LENGTH_SHORT).show();
                 gameOver();
             }
         }
@@ -219,7 +141,5 @@ public class MainActivity extends ActionBarActivity {
                 deviceButton.setOnClickListener(null);
             }
         }
-
-
     }
 }
