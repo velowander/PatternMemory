@@ -11,38 +11,16 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <fragment
+        android:id="@+id/fragment_scorebar"
+        android:name="org.fanchuan.coursera.patternmemory.ScoreBarFragment"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            style="@style/score_bar"
-            android:layout_gravity="right"
-            android:text="@string/score_caption" />
-
-        <TextView
-            android:id="@+id/tvwScore"
-            android:layout_width="50dp"
-            style="@style/score_bar"
-            android:layout_gravity="right"
-            android:text="--" />
-
-        <TextView
-            style="@style/score_bar"
-            android:layout_gravity="right"
-            android:text="@string/round_caption" />
-
-        <TextView
-            android:id="@+id/tvwRound"
-            android:layout_width="40dp"
-            style="@style/score_bar"
-            android:layout_gravity="right"
-            android:text="--" />
-    </LinearLayout>
+        android:layout_width="match_parent"
+        tools:layout="@layout/fragment_scorebar" />
 
     <Button
         style="@style/score_bar"
+        android:layout_gravity="center_horizontal"
         android:onClick="onClickBeginGame"
         android:text="@string/begin_game_button" />
 

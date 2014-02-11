@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:orientation="horizontal">
+
+    <TextView
+        style="@style/score_bar"
+        android:layout_gravity="right"
+        android:text="@string/score_caption" />
+
+    <TextView
+        android:id="@+id/tvwScore"
+        android:layout_width="50dp"
+        style="@style/score_bar"
+        android:layout_gravity="right"
+        android:text="--" />
+
+    <TextView
+        style="@style/score_bar"
+        android:layout_gravity="right"
+        android:text="@string/round_caption" />
+
+    <TextView
+        android:id="@+id/tvwRound"
+        android:layout_width="40dp"
+        style="@style/score_bar"
+        android:layout_gravity="right"
+        android:text="--" />
+</LinearLayout>
