@@ -24,47 +24,11 @@
         android:onClick="onClickBeginGame"
         android:text="@string/begin_game_button" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <fragment
+        android:id="@+id/fragment_board"
+        android:name="org.fanchuan.coursera.patternmemory.BoardFragment"
         android:layout_height="match_parent"
-        android:layout_weight="0.5"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/buttonGreen"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:background="@drawable/button_green" />
-
-        <Button
-            android:id="@+id/buttonRed"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:background="@drawable/button_red" />
-    </LinearLayout>
-
-    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.5"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/buttonYellow"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:background="@drawable/button_yellow" />
-
-        <Button
-            android:id="@+id/buttonBlue"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:background="@drawable/button_blue" />
-
-    </LinearLayout>
+        tools:layout="@layout/fragment_board" />
 </LinearLayout>
 
