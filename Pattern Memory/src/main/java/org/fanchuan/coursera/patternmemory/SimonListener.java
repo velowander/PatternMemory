@@ -26,6 +26,8 @@ class SimonListener implements View.OnClickListener {
         for (View deviceButton : simonButtons) {
             deviceButton.setOnClickListener(this);
         }
+        mySimon.begin();
+
     }
 
     public void onClick(View vw) {

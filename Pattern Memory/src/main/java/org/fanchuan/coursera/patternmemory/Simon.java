@@ -1,5 +1,6 @@
 package org.fanchuan.coursera.patternmemory;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
@@ -18,16 +19,29 @@ class Simon {
     final int PAUSE_DURATION_MS = 200; // How long the computer pauses between playback button presses
     private final String TAG = Simon.class.getSimpleName();
     private final java.util.Random rand = new java.util.Random();
-    private List<View> playList = new ArrayList<View>();
+    private final Handler handlerPlay = new Handler();
+    private List<View> playList;
     private List<View> deviceButtons;
     private Iterator playListIterator; //used to verify user is playing melody correctly
 
-    //Passing a List of the device's View (could be Button) objects is required; then this class adds itself as a click listener.
+    /* Passing a List of the device's View (could be Button) objects is required. This is all that Simon
+    * knows about the UI */
     protected Simon(List<View> deviceButtons) {
         super();
         if (deviceButtons == null || deviceButtons.size() == 0)
             throw new IllegalArgumentException();
         this.deviceButtons = deviceButtons;
+        begin();
+    }
+
+    protected void begin() {
+        /* Prior to begin() method, if the user started a new game while the melody was playing,
+        the melody from the old game would continue playing while the first note from the new melody
+        would start playing. begin() cancels any such pending activity.
+         */
+        handlerPlay.removeCallbacksAndMessages(null);
+        playList = new ArrayList<View>();
+        playListIterator = playList.iterator();
     }
 
     protected List<View> getDeviceButtons() {
@@ -58,7 +72,7 @@ class Simon {
         int delayMultiplier = 1;
         if (playList == null) return false;
         for (final View vwPlay : playList) {
-            vwPlay.postDelayed(new Runnable() {
+            handlerPlay.postDelayed(new Runnable() {
                 public void run() {
                     playOne(vwPlay);
                 }
