@@ -76,7 +76,7 @@ class Simon {
     }
 
     @SuppressWarnings("unused")
-    protected void noteRandomAdd(int numberToAdd) {
+    protected synchronized void noteRandomAdd(int numberToAdd) {
         //Use this method to add Random buttons in bulk.
         for (int i = 0; i < numberToAdd; i++) {
             noteRandomAdder();
@@ -84,7 +84,7 @@ class Simon {
         playListIterator = playList.iterator();
     }
 
-    protected void noteRandomAdd() {
+    protected synchronized void noteRandomAdd() {
         noteRandomAdder();
         playListIterator = playList.iterator();
     }
