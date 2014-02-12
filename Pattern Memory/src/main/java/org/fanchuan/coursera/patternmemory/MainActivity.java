@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +25,9 @@ public class MainActivity extends ActionBarActivity {
     @SuppressWarnings("unused")
     public void onClickBeginGame(View vw) {
         simon = initializeSimon();
-        TextView tvwScore = (TextView) findViewById(R.id.tvwScore);
-        TextView tvwRound = (TextView) findViewById(R.id.tvwRound);
-        SimonListener listener = new SimonListener(simon, tvwScore, tvwRound);
+        ScoreBarUpdate scoreBarUpdate = (ScoreBarUpdate) getSupportFragmentManager().findFragmentById(R.id.fragment_score_bar);
+        scoreBarUpdate.resetScore();
+        SimonListener listener = new SimonListener(simon, scoreBarUpdate);
         simon.noteRandomAdd();
         simon.play();
     }

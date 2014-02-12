@@ -12,7 +12,7 @@
     tools:context=".MainActivity">
 
     <fragment
-        android:id="@+id/fragment_scorebar"
+        android:id="@+id/fragment_score_bar"
         android:name="org.fanchuan.coursera.patternmemory.ScoreBarFragment"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
