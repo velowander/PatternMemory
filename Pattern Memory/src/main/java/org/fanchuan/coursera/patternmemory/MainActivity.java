@@ -3,18 +3,14 @@ package org.fanchuan.coursera.patternmemory;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MainActivity extends ActionBarActivity {
 
     final String TAG = MainActivity.class.getSimpleName();
-    Simon simon;
+    //Simon simon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,25 +20,10 @@ public class MainActivity extends ActionBarActivity {
 
     @SuppressWarnings("unused")
     public void onClickBeginGame(View vw) {
-        initializeSimon();
         ScoreBarUpdate scoreBarUpdate = (ScoreBarUpdate) getSupportFragmentManager().findFragmentById(R.id.fragment_score_bar);
         scoreBarUpdate.resetScore();
-        SimonListener listener = new SimonListener(simon, scoreBarUpdate);
-        simon.begin();
-        simon.noteRandomAdd();
-        simon.play();
-    }
-
-    protected void initializeSimon() {
-        if (this.simon == null) {
-            List<View> deviceButtons = new ArrayList<View>();
-            deviceButtons.add(findViewById(R.id.buttonGreen));
-            deviceButtons.add(findViewById(R.id.buttonRed));
-            deviceButtons.add(findViewById(R.id.buttonBlue));
-            deviceButtons.add(findViewById(R.id.buttonYellow));
-            Log.d(TAG, "Simon initialized with device button count: " + deviceButtons.size());
-            this.simon = new Simon(deviceButtons);
-        }
+        BoardFragment boardFragment = (BoardFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_board);
+        boardFragment.begin(scoreBarUpdate);
     }
 
     @Override

@@ -12,7 +12,7 @@ public class ScoreBarFragment extends Fragment implements ScoreBarUpdate {
     /* Takes care of updating the score and round for the score bar, so it maintains a reference to
     both after inflating the fragment.
      */
-    private String TAG = SimonListener.class.getSimpleName();
+    private String TAG = ScoreBarFragment.class.getSimpleName();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

@@ -10,11 +10,13 @@ import java.util.List;
 
 class Simon {
     /* Mostly UI independent Simon implementation (although assumes it is passed a List<View> in the
-    constructor which is Android specific).
+    constructor which is Android specific and more importantly ties Simon to the lifecycle of the
+    original host activity (bad)).
     In: List<View> - only required to have 1 View, though classic game had 4. Views could be buttons but
     don't need to be; they do need to implement .setPressed() which is how Simon indicates to the UI
     that it is playing a melody.
      */
+    //TODO Refactor Simon not to use Views (recommend integer)
     final int PLAY_DURATION_MS = 600; // How long the computer presses the buttons during playback
     final int PAUSE_DURATION_MS = 200; // How long the computer pauses between playback button presses
     private final String TAG = Simon.class.getSimpleName();
@@ -44,6 +46,7 @@ class Simon {
         playListIterator = playList.iterator();
     }
 
+    @SuppressWarnings("unused")
     protected List<View> getDeviceButtons() {
         return this.deviceButtons;
     }
