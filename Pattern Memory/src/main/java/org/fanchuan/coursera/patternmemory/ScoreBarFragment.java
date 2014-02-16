@@ -13,21 +13,17 @@ public class ScoreBarFragment extends Fragment implements ScoreBarUpdate {
     both after inflating the fragment.
      */
     private String TAG = SimonListener.class.getSimpleName();
-    private TextView tvwRound;
-    private TextView tvwScore;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View scoreBar = inflater.inflate(R.layout.fragment_score_bar, container, false);
-        this.tvwRound = (TextView) scoreBar.findViewById(R.id.tvwRound);
-        this.tvwScore = (TextView) scoreBar.findViewById(R.id.tvwScore);
-        return scoreBar;
+        return inflater.inflate(R.layout.fragment_score_bar, container, false);
     }
 
     public void incrementRound() {
         try {
+            TextView tvwRound = (TextView) getView().findViewById(R.id.tvwRound);
             int round = Integer.parseInt(tvwRound.getText().toString());
             round++;
             tvwRound.setText(Integer.toString(round));
@@ -38,6 +34,7 @@ public class ScoreBarFragment extends Fragment implements ScoreBarUpdate {
 
     public void incrementScore() {
         try {
+            TextView tvwScore = (TextView) getView().findViewById(R.id.tvwScore);
             if (tvwScore == null)
                 Log.w(TAG, "tvwScore is null");
             int score = Integer.parseInt(tvwScore.getText().toString());
@@ -49,6 +46,8 @@ public class ScoreBarFragment extends Fragment implements ScoreBarUpdate {
     }
 
     public void resetScore() {
+        TextView tvwScore = (TextView) getView().findViewById(R.id.tvwScore);
+        TextView tvwRound = (TextView) getView().findViewById(R.id.tvwRound);
         tvwScore.setText(Integer.toString(0));
         tvwRound.setText(Integer.toString(0));
     }
