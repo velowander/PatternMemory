@@ -10,7 +10,8 @@ import android.widget.TextView;
 
 public class ScoreBarFragment extends Fragment implements ScoreBarUpdate {
     /* Takes care of updating the score and round for the score bar, so it maintains a reference to
-    both after inflating the fragment.
+    both after inflating the fragment. In the event of a configuration change (orientation, for example)
+    this fragment maintains no state but the score and round views do need android:freezesText = "true"
      */
     private String TAG = ScoreBarFragment.class.getSimpleName();
 

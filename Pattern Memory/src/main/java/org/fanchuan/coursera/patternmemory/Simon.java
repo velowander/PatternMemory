@@ -1,55 +1,80 @@
 package org.fanchuan.coursera.patternmemory;
 
-import android.os.Handler;
 import android.util.Log;
-import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 class Simon {
-    /* Mostly UI independent Simon implementation (although assumes it is passed a List<View> in the
-    constructor which is Android specific and more importantly ties Simon to the lifecycle of the
-    original host activity (bad)).
-    In: List<View> - only required to have 1 View, though classic game had 4. Views could be buttons but
-    don't need to be; they do need to implement .setPressed() which is how Simon indicates to the UI
-    that it is playing a melody.
+    /* UI independent Simon implementation. Major refactor and method swap with Board Fragment. All game
+    * logic is now in Simon rather than distributed between BoardFragment and Simon. Simon no longer presses
+    * buttons directly but rather tells the BoardHost to do it (methods moved into BoardFragment).
+    * Simon no longer holds references to android Views, so it is the host's responsibility to give Simon
+    * an index and to convert Simon's play requests to the BoardHost in to the actual Views.
+    * This refactor is both for a reference of clearer class responsibilities than the previous version, and
+    * hopefully the board can now undergo configuration changes without disrupting the game.
+    * Previously, configuration changes would not crash the game but the new Activity would have different
+    * View objects than the ones Simon references, causing both a memory leak from holding that reference and
+    * causing all button presses to be "incorrect", as the original views were no longer available.
      */
-    //TODO Refactor Simon not to use Views (recommend integer)
-    final int PLAY_DURATION_MS = 600; // How long the computer presses the buttons during playback
-    final int PAUSE_DURATION_MS = 200; // How long the computer pauses between playback button presses
     private final String TAG = Simon.class.getSimpleName();
     private final java.util.Random rand = new java.util.Random();
-    private final Handler handlerPlay = new Handler();
-    private List<View> playList;
-    private List<View> deviceButtons;
+    private final byte MESSAGE_ROUND_WIN = 0; //for boardHost.gameMessage(MESSAGE_CODE)
+    private final byte MESSAGE_LOSE = 1;
+    private List<Byte> playList = new ArrayList<Byte>();
+    private BoardHost boardHost;
+    private ScoreBarUpdate scoreBarUpdate;
+    private byte[] indexButtons;
     private Iterator playListIterator; //used to verify user is playing melody correctly
 
-    /* Passing a List of the device's View (could be Button) objects is required. This is all that Simon
-    * knows about the UI */
-    protected Simon(List<View> deviceButtons) {
+    protected Simon(byte[] indexButtons, BoardHost boardHost) {
+        /* indexButtons - array of button indices. Typically for 4 buttons this would be {0,1,2,3} however the
+        * index numbers can be positive or negative, non-consecutive and in any order.
+        * boardHost, the entity hosting the board that can handle showing button presses and */
         super();
-        if (deviceButtons == null || deviceButtons.size() == 0)
-            throw new IllegalArgumentException();
-        this.deviceButtons = deviceButtons;
-    }
-
-    protected void begin() {
-        /* Prior to begin() method, if the user started a new game while the melody was playing,
-        the melody from the old game would continue playing while the first note from the new melody
-        would start playing. begin() cancels any such pending activity.
-         */
-        handlerPlay.removeCallbacksAndMessages(null);
-        playList = new ArrayList<View>();
+        if (indexButtons.length == 0) throw new IllegalArgumentException();
+        this.indexButtons = indexButtons;
+        this.boardHost = boardHost;
         playListIterator = playList.iterator();
-        noteRandomAdd();
-        play();
     }
 
-    @SuppressWarnings("unused")
-    protected List<View> getDeviceButtons() {
-        return this.deviceButtons;
+    protected void begin(ScoreBarUpdate scoreBarUpdate) {
+        /*Simon does not know the score or what round it is, but it uses the reference to scoreBarUpdate to
+        * notify of incrementing the score or round by 1. */
+        playListIterator = playList.iterator();
+        this.scoreBarUpdate = scoreBarUpdate;
+        noteRandomAdd();
+        boardHost.play(playList);
+    }
+
+    public void buttonPressed(byte indexButton) {
+        //Activity parentActivity = (Activity) vw.getContext();
+        if (verifyButtonPressed(indexButton)) {
+            //This button press matches the current one in the Iterator, get a point whether it is the last or not
+            scoreBarUpdate.incrementScore();
+            if (!hasNext()) {
+                //No more buttons to press, at the end of the melody!! Next round.
+                scoreBarUpdate.incrementRound();
+                //String messageRoundWin = parentActivity.getResources().getString(R.string.message_round_win);
+                try {
+                    boardHost.gameMessage(MESSAGE_ROUND_WIN);
+                    //Toast.makeText(parentActivity, messageRoundWin, Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Log.w(TAG, "Unable to send Round Win Message");
+                }
+                noteRandomAdd();
+                boardHost.play(playList);
+            }
+        } else {
+            //String messageLose = parentActivity.getResources().getString(R.string.message_lose);
+            try {
+                boardHost.gameMessage(MESSAGE_LOSE);
+                //Toast.makeText(parentActivity, messageLose, Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                Log.w(TAG, "Unable to send Game Lost Message");
+            }
+        }
     }
 
     protected boolean hasNext() {
@@ -61,36 +86,11 @@ class Simon {
         }
     }
 
-    protected void playOne(final View VW) {
-        VW.setPressed(true); //if doesn't redraw on API10, add BTN.invalidate()!
-        VW.postDelayed(new Runnable() {
-            public void run() {
-                VW.setPressed(false);
-            }
-        }, PLAY_DURATION_MS);
-    }
-
-    protected boolean play() {
-        /* In: List of View objects (notes) to play
-        Returns false if the melody won't play, true otherwise */
-        int delayMultiplier = 1;
-        if (playList == null) return false;
-        for (final View vwPlay : playList) {
-            handlerPlay.postDelayed(new Runnable() {
-                public void run() {
-                    playOne(vwPlay);
-                }
-            }, delayMultiplier * (PLAY_DURATION_MS + PAUSE_DURATION_MS));
-            delayMultiplier++; //Need this multiplier so that played back notes are consecutive in time
-        }
-        return true;
-    }
-
     private void noteRandomAdder() {
         //Typically not called directly as it does not create the iterator for verifying the user's input
-        int deviceButtonIndex = rand.nextInt(deviceButtons.size());
+        int deviceButtonIndex = rand.nextInt(indexButtons.length);
         Log.v(TAG, "deviceButtonIndex: " + deviceButtonIndex);
-        playList.add(deviceButtons.get(deviceButtonIndex));
+        playList.add(indexButtons[deviceButtonIndex]);
     }
 
     @SuppressWarnings("unused")
@@ -108,13 +108,13 @@ class Simon {
     }
 
     @SuppressWarnings("unused")
-    protected void setPlayList(List<View> myPlayList) {
+    protected void setPlayList(List<Byte> myPlayList) {
         this.playList = myPlayList;
     }
 
-    boolean verifyButtonPress(View vw) {
+    boolean verifyButtonPressed(byte indexButton) {
         /* Verify the button pressed by the user - is it part of the melody?
         Return true if part of melody, false otherwise */
-        return playListIterator.hasNext() && vw == playListIterator.next();
+        return playListIterator.hasNext() && indexButton == playListIterator.next();
     }
 }

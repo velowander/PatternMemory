@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="board_host_messages">
+        <item>Round complete. My turn.</item>
+        <item>Incorrect; your game is over. Play again?</item>
+    </string-array>
+
+</resources>
