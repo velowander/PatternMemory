@@ -42,6 +42,7 @@ class Simon {
     protected void begin(ScoreBarUpdate scoreBarUpdate) {
         /*Simon does not know the score or what round it is, but it uses the reference to scoreBarUpdate to
         * notify of incrementing the score or round by 1. */
+        playList = new ArrayList<Byte>();
         playListIterator = playList.iterator();
         this.scoreBarUpdate = scoreBarUpdate;
         noteRandomAdd();
