@@ -22,7 +22,8 @@ class Simon {
     private final java.util.Random rand = new java.util.Random();
     private final byte MESSAGE_ROUND_WIN = 0; //for boardHost.gameMessage(MESSAGE_CODE)
     private final byte MESSAGE_LOSE = 1;
-    private List<Byte> playList = new ArrayList<Byte>();
+    private boolean gameOn = false;
+    private List<Byte> playList;
     private BoardHost boardHost;
     private ScoreBarUpdate scoreBarUpdate;
     private byte[] indexButtons;
@@ -36,12 +37,12 @@ class Simon {
         if (indexButtons.length == 0) throw new IllegalArgumentException();
         this.indexButtons = indexButtons;
         this.boardHost = boardHost;
-        playListIterator = playList.iterator();
     }
 
     protected void begin(ScoreBarUpdate scoreBarUpdate) {
         /*Simon does not know the score or what round it is, but it uses the reference to scoreBarUpdate to
         * notify of incrementing the score or round by 1. */
+        gameOn = true;
         playList = new ArrayList<Byte>();
         playListIterator = playList.iterator();
         this.scoreBarUpdate = scoreBarUpdate;
@@ -50,14 +51,12 @@ class Simon {
     }
 
     public void buttonPressed(byte indexButton) {
-        //Activity parentActivity = (Activity) vw.getContext();
+        if (!gameOn) return; //Simon ignores the button press if the game isn't in progress.
         if (verifyButtonPressed(indexButton)) {
-            //This button press matches the current one in the Iterator, get a point whether it is the last or not
             scoreBarUpdate.incrementScore();
             if (!hasNext()) {
                 //No more buttons to press, at the end of the melody!! Next round.
                 scoreBarUpdate.incrementRound();
-                //String messageRoundWin = parentActivity.getResources().getString(R.string.message_round_win);
                 try {
                     boardHost.gameMessage(MESSAGE_ROUND_WIN);
                     //Toast.makeText(parentActivity, messageRoundWin, Toast.LENGTH_SHORT).show();
@@ -68,12 +67,14 @@ class Simon {
                 boardHost.play(playList);
             }
         } else {
-            //String messageLose = parentActivity.getResources().getString(R.string.message_lose);
+            //Incorrect key press, the game is over.
             try {
                 boardHost.gameMessage(MESSAGE_LOSE);
-                //Toast.makeText(parentActivity, messageLose, Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 Log.w(TAG, "Unable to send Game Lost Message");
+            } finally {
+                boardHost.gameOver();
+                gameOn = false;
             }
         }
     }
@@ -115,6 +116,8 @@ class Simon {
 
     boolean verifyButtonPressed(byte indexButton) {
         /* Verify the button pressed by the user - is it part of the melody?
+        The verification is very simple, just a comparison. We check .hasNext to make sure the user doesn't
+        type too many keys - automatic fail during the game.
         Return true if part of melody, false otherwise */
         return playListIterator.hasNext() && indexButton == playListIterator.next();
     }

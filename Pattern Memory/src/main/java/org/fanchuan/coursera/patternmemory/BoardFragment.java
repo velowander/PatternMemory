@@ -72,6 +72,11 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Boa
         Toast.makeText(getActivity(), boardHostMessages[MESSAGE_CODE], Toast.LENGTH_SHORT).show();
     }
 
+    public void gameOver() {
+        /* Received signal that game is over, cancel all callbacks on this handler */
+        handlerPlay.removeCallbacksAndMessages(null);
+    }
+
     public boolean initialize() {
         /* BoardFragment must have initialized its root view already; could call in onCreateView AFTER
         inflating the view or in, for example, on ActivityCreated()
@@ -133,8 +138,11 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Boa
 }
 
 interface BoardHost {
+    public void gameOver();
+
     public boolean play(List<Byte> playList);
 
+    @SuppressWarnings("unused")
     public void playOne(byte buttonIndex);
 
     public void gameMessage(byte MESSAGE_CODE);
