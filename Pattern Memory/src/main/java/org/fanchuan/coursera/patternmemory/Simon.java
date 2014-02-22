@@ -33,7 +33,6 @@ class Simon {
         if (deviceButtons == null || deviceButtons.size() == 0)
             throw new IllegalArgumentException();
         this.deviceButtons = deviceButtons;
-        begin();
     }
 
     protected void begin() {

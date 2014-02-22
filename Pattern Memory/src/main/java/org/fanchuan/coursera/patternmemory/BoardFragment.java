@@ -20,7 +20,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     starts the game.
      */
     private String TAG = BoardFragment.class.getSimpleName();
-    private boolean gameOn = false;
     private List<View> simonButtons;
     private ScoreBarUpdate scoreBarUpdate;
     private Simon simon;
@@ -66,20 +65,13 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             } catch (Exception e) {
                 Log.w(TAG, "Unable to send Toast: " + messageLose);
             }
-            gameOver();
         }
     }
 
     void begin(ScoreBarUpdate scoreBarUpdate) {
         //Assumes a game starting with 1 random note
-        this.gameOn = true;
         this.scoreBarUpdate = scoreBarUpdate;
         simon.begin();
-    }
-
-    @SuppressWarnings("unused")
-    void gameOver() {
-        this.gameOn = false;
     }
 
     public boolean initialize() {
