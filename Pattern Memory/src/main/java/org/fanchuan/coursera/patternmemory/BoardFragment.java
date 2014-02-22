@@ -46,15 +46,18 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Boa
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (!initialize()) {
-            Log.e(TAG, "Simon has failed to initialize");
+            Log.e(TAG, "Simon is not available");
             Toast.makeText(getActivity(), getActivity().getString(R.string.initialization_error), Toast.LENGTH_SHORT).show();
         }
     }
 
     public void onClick(View vw) {
-        //TODO delegate to Simon's buttonPressed
         byte indexButton = (byte) simonButtons.indexOf(vw);
-        simon.buttonPressed(indexButton);
+        try {
+            simon.buttonPressed(indexButton);
+        } catch (Exception e) {
+            Log.e(TAG, "Simon unavailable", e);
+        }
     }
 
     void begin(ScoreBarUpdate scoreBarUpdate) {
@@ -64,7 +67,11 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Boa
         would start playing. begin() cancels any such pending activity.
          */
         handlerPlay.removeCallbacksAndMessages(null);
-        simon.begin(scoreBarUpdate);
+        try {
+            simon.begin(scoreBarUpdate);
+        } catch (Exception e) {
+            Log.e(TAG, "Simon unavailable", e);
+        }
     }
 
     public void gameMessage(byte MESSAGE_CODE) {
@@ -79,7 +86,10 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Boa
 
     public boolean initialize() {
         /* BoardFragment must have initialized its root view already; could call in onCreateView AFTER
-        inflating the view or in, for example, on ActivityCreated()
+        inflating the view or in, for example, on ActivityCreated(). If the parent Activity has a configuration
+        change (e.g. orientation), we need to get all the new Views. We only initialize Simon if it is null
+        because "the new" Simon stores button indexes not actual views and does not need to be refreshed when
+        the Activity destroys and recreates.
         Return false if initialization fails, true otherwise
          */
 
@@ -99,7 +109,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Boa
         }
         byte[] buttonIndices = {0, 1, 2, 3};
         try {
-            this.simon = new Simon(buttonIndices, this);
+            if (simon == null) this.simon = new Simon(buttonIndices, this);
         } catch (Exception e) {
             Log.e(TAG, "Unable to instantiate Simon, e");
             return false;

@@ -9,11 +9,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class ScoreBarFragment extends Fragment implements ScoreBarUpdate {
-    /* Takes care of updating the score and round for the score bar, so it maintains a reference to
-    both after inflating the fragment. In the event of a configuration change (orientation, for example)
-    this fragment maintains no state but the score and round views do need android:freezesText = "true"
-     */
+    /* Takes care of updating the score and round when called through its ScoreBarUpdate interface.
+    * In the event of a configuration change (orientation, for example)
+    * this fragment maintains no member variables but any clients of the ScoreBarUpdate callback interface will need
+    * this instance retained. The class uses the score and round views to keep track of the score;
+    * both need android:freezesText = "true" */
     private String TAG = ScoreBarFragment.class.getSimpleName();
+
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
