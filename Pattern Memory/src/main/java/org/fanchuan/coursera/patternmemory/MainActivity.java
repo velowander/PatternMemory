@@ -20,6 +20,9 @@ public class MainActivity extends ActionBarActivity {
 
     @SuppressWarnings("unused")
     public void onClickBeginGame(View vw) {
+        /* BoardFragment instance needs to tell ScoreBarFragment when to update the score and round, which it does via an interface
+        * MainActivity sets up this communication then is not involved in running the game thereafter.
+         */
         ScoreBarUpdate scoreBarUpdate = (ScoreBarUpdate) getSupportFragmentManager().findFragmentById(R.id.fragment_score_bar);
         scoreBarUpdate.resetScore();
         BoardFragment boardFragment = (BoardFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_board);

@@ -13,14 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BoardFragment extends Fragment implements View.OnClickListener {
-    /* This BoardFragment hosts everything to do with managing the board and most aspects of the game,
-    other than the score.
+    /* This BoardFragment hosts everything to do with managing the board: the game logic class Simon,
+    listening to and pressing the buttons via their .setPressed() methods.
     It needs a reference to ScoreBarUpdate but can't accept it via constructor to enable use in an
     XML layout; this was a design tradeoff. Pass the ScoreBarUpdate reference in the begin() method which
     starts the game.
      */
     private String TAG = BoardFragment.class.getSimpleName();
-    private boolean gameOn = false; //
+    private boolean gameOn = false;
     private List<View> simonButtons;
     private ScoreBarUpdate scoreBarUpdate;
     private Simon simon;
@@ -75,8 +75,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         this.gameOn = true;
         this.scoreBarUpdate = scoreBarUpdate;
         simon.begin();
-        simon.noteRandomAdd();
-        simon.play();
     }
 
     @SuppressWarnings("unused")

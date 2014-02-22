@@ -44,6 +44,8 @@ class Simon {
         handlerPlay.removeCallbacksAndMessages(null);
         playList = new ArrayList<View>();
         playListIterator = playList.iterator();
+        noteRandomAdd();
+        play();
     }
 
     @SuppressWarnings("unused")
