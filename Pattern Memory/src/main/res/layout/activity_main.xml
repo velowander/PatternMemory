@@ -19,9 +19,9 @@
         tools:layout="@layout/fragment_score_bar" />
 
     <Button
+        android:id="@+id/buttonBegin"
         style="@style/score_bar"
         android:layout_gravity="center_horizontal"
-        android:onClick="onClickBeginGame"
         android:text="@string/begin_game_button" />
 
     <fragment

@@ -15,8 +15,7 @@
         android:layout_width="50dp"
         style="@style/score_bar"
         android:freezesText="true"
-        android:layout_gravity="right"
-        android:text="--" />
+        android:layout_gravity="right" />
 
     <TextView
         style="@style/score_bar"
@@ -28,6 +27,5 @@
         android:layout_width="40dp"
         style="@style/score_bar"
         android:freezesText="true"
-        android:layout_gravity="right"
-        android:text="--" />
+        android:layout_gravity="right" />
 </LinearLayout>

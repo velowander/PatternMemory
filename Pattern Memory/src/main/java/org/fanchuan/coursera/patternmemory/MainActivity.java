@@ -22,19 +22,14 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        //ScoreBarFragment observes Score changes in BoardFragment
         ScoreBarFragment scoreBarFragment = (ScoreBarFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_score_bar);
         BoardFragment boardFragment = (BoardFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_board);
         boardFragment.getScoreObservable().addObserver(scoreBarFragment);
+        //GameBeginListener waits for user to press Begin Game button
+        View vwBeginGame = findViewById(R.id.buttonBegin);
+        vwBeginGame.setOnClickListener(new BeginGameListener());
         Log.v(TAG, MainActivity.class.getSimpleName() + " onStart");
-    }
-
-    @SuppressWarnings("unused") //parameter vw
-    public void onClickBeginGame(View vw) {
-        /* BoardFragment instance needs to tell ScoreBarFragment when to update the score and round, which it does via an interface
-        * MainActivity sets up this communication then is not involved in running the game thereafter.
-         */
-        Log.d(TAG, MainActivity.class.getSimpleName() + " onClickBeginGame");
-        ((BoardFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_board)).begin();
     }
 
     @Override
@@ -58,6 +53,15 @@ public class MainActivity extends ActionBarActivity {
         } else {
             //TODO Create a settings screen? Configure note play duration?
             return true;
+        }
+    }
+
+    public class BeginGameListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            //TODO Why does the begin game button stop working after orientation change?
+            Log.d(TAG, MainActivity.class.getSimpleName() + " onClickBeginGame");
+            ((BoardFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_board)).begin();
         }
     }
 }
