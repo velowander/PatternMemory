@@ -3,6 +3,7 @@ package org.fanchuan.coursera.patternmemory;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,15 +19,22 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
     }
 
-    @SuppressWarnings("unused")
+    @Override
+    protected void onStart() {
+        super.onStart();
+        ScoreBarFragment scoreBarFragment = (ScoreBarFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_score_bar);
+        BoardFragment boardFragment = (BoardFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_board);
+        boardFragment.getScoreObservable().addObserver(scoreBarFragment);
+        Log.v(TAG, MainActivity.class.getSimpleName() + " onStart");
+    }
+
+    @SuppressWarnings("unused") //parameter vw
     public void onClickBeginGame(View vw) {
         /* BoardFragment instance needs to tell ScoreBarFragment when to update the score and round, which it does via an interface
         * MainActivity sets up this communication then is not involved in running the game thereafter.
          */
-        ScoreBarUpdate scoreBarUpdate = (ScoreBarUpdate) getSupportFragmentManager().findFragmentById(R.id.fragment_score_bar);
-        scoreBarUpdate.resetScore();
-        BoardFragment boardFragment = (BoardFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_board);
-        boardFragment.begin(scoreBarUpdate);
+        Log.d(TAG, MainActivity.class.getSimpleName() + " onClickBeginGame");
+        ((BoardFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_board)).begin();
     }
 
     @Override

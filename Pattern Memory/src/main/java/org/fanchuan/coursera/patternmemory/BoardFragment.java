@@ -27,7 +27,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Boa
     private Simon simon;
     private final Handler handlerPlay = new Handler();
 
-
+    //Class: v4.app.Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +51,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Boa
         }
     }
 
+    //Respond to button presses
     public void onClick(View vw) {
         byte indexButton = (byte) simonButtons.indexOf(vw);
         try {
@@ -60,7 +61,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Boa
         }
     }
 
-    void begin(ScoreBarUpdate scoreBarUpdate) {
+    //"Business" logic
+    void begin() {
         /* Assumes a game starting with 1 random note
         Prior to begin() method, if the user started a new game while the melody was playing,
         the melody from the old game would continue playing while the first note from the new melody
@@ -68,7 +70,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Boa
          */
         handlerPlay.removeCallbacksAndMessages(null);
         try {
-            simon.begin(scoreBarUpdate);
+            simon.begin();
         } catch (Exception e) {
             Log.e(TAG, "Simon unavailable", e);
         }
@@ -82,6 +84,11 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Boa
     public void gameOver() {
         /* Received signal that game is over, cancel all callbacks on this handler */
         handlerPlay.removeCallbacksAndMessages(null);
+    }
+
+    Simon.ScoreObservable getScoreObservable() {
+        /* Any observers interested in the score will need to observe this observable */
+        return simon.getScoreObservable();
     }
 
     public boolean initialize() {
