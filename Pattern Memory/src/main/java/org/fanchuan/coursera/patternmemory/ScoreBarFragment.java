@@ -61,7 +61,7 @@ public class ScoreBarFragment extends Fragment implements Observer {
             round++;
             tvwRound.setText(Integer.toString(round));
         } catch (Exception e) {
-            Log.e(TAG, "Unable to set round", e);
+            Log.w(TAG, "Unable to set round", e);
         }
     }
 
@@ -73,14 +73,18 @@ public class ScoreBarFragment extends Fragment implements Observer {
             score++;
             tvwScore.setText(Integer.toString(score));
         } catch (Exception e) {
-            Log.e(TAG, "Unable to set score", e);
+            Log.w(TAG, "Unable to set score", e);
         }
     }
 
     private void resetScore() {
-        TextView tvwScore = (TextView) getView().findViewById(R.id.tvwScore);
-        TextView tvwRound = (TextView) getView().findViewById(R.id.tvwRound);
-        tvwScore.setText(Integer.toString(0));
-        tvwRound.setText(Integer.toString(0));
+        try {
+            TextView tvwScore = (TextView) getView().findViewById(R.id.tvwScore);
+            tvwScore.setText(Integer.toString(0));
+            TextView tvwRound = (TextView) getView().findViewById(R.id.tvwRound);
+            tvwRound.setText(Integer.toString(0));
+        } catch (Exception e) {
+            Log.w(TAG, "resetScore(): Unable to reset score or round", e);
+        }
     }
 }

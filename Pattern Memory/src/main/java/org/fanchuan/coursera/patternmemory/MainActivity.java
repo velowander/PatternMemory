@@ -61,7 +61,11 @@ public class MainActivity extends ActionBarActivity {
         public void onClick(View view) {
             //TODO Why does the begin game button stop working after orientation change?
             Log.d(TAG, MainActivity.class.getSimpleName() + " onClickBeginGame");
-            ((BoardFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_board)).begin();
+            try {
+                ((BoardFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_board)).begin();
+            } catch (Exception e) {
+                Log.e(TAG, "BeginGameListener onClick Exception", e);
+            }
         }
     }
 }
