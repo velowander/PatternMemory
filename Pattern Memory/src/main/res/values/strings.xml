@@ -7,6 +7,7 @@
     <string name="initialization_error">Unknown initialization error</string>
     <string name="help_button">Help</string>
     <string name="help_text">The original Milton Bradley <b>Simon</b> electronic game (<i>icon: Wikimedia Commons</i>) from the 1970s inspired this game.\n\nAfter you click the <u>Begin Game</u> button, the computer will light one of the 4 colored tiles; click yours in turn and get a point. In each subsequent round, the computer will add one more random tile to the pattern. You get one more point for each tile you successfully press in the correct order.\nThe game ends when you press an incorrect tile.\n\nPlease wait until the computer has lighted the tiles in the pattern before you begin pressing them (otherwise you may not see the pattern you need to reproduce).</string>
+    <string name="help_title">Help</string>
     <string name="round_caption"><b>Round </b></string>
     <string name="score_caption"><b>Score </b></string>
     <string name="title_activity_main_activity2">MainActivity</string>

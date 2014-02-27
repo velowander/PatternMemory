@@ -1,6 +1,6 @@
 package org.fanchuan.coursera.patternmemory;
 
-import android.app.Dialog;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -46,9 +46,11 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.help_action) {
-            Dialog help = new Dialog(this);
-            help.setContentView(R.layout.dialog_help);
-            help.show();
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.help_title);
+            builder.setMessage(R.string.help_text);
+            builder.setPositiveButton(android.R.string.ok, null);
+            builder.show();
             return true;
         } else {
             //TODO Create a settings screen? Configure note play duration?
