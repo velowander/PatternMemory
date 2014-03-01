@@ -11,7 +11,6 @@ import android.view.View;
 public class MainActivity extends ActionBarActivity {
 
     final String TAG = MainActivity.class.getSimpleName();
-    //Simon simon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +60,6 @@ public class MainActivity extends ActionBarActivity {
     public class BeginGameListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            //TODO Why does the begin game button stop working after orientation change?
             Log.d(TAG, MainActivity.class.getSimpleName() + " onClickBeginGame");
             try {
                 ((BoardFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_board)).begin();

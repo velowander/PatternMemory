@@ -101,6 +101,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Boa
          */
 
         try {
+            /* If we are running initialize() due to a configuration change, we need to reuse our existing
+            * Simon instance which has the state of the current melody but we need to refresh our Views
+            * as the previous Views were destroyed.*/
             simonButtons = new ArrayList<View>();
             simonButtons.add(getView().findViewById(R.id.buttonGreen));
             simonButtons.add(getView().findViewById(R.id.buttonRed));
@@ -114,9 +117,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Boa
         for (View simonButton : simonButtons) {
             simonButton.setOnClickListener(this);
         }
-        byte[] buttonIndices = {0, 1, 2, 3};
         try {
-            if (simon == null) this.simon = new Simon(buttonIndices, this);
+            if (simon == null) this.simon = new Simon((byte) simonButtons.size(), this);
         } catch (Exception e) {
             Log.e(TAG, "Unable to instantiate Simon, e");
             return false;

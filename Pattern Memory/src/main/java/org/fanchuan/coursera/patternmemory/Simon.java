@@ -35,7 +35,20 @@ class Simon {
         * index numbers can be positive or negative, non-consecutive and in any order.
         * boardHost, the entity hosting the board that can handle showing button presses and */
         super();
-        if (indexButtons.length == 0) throw new IllegalArgumentException();
+        if (indexButtons.length == 0) throw new IllegalArgumentException("indexButtons.length 1+");
+        this.indexButtons = indexButtons;
+        this.boardHost = boardHost;
+    }
+
+    protected Simon(final byte countButtons, final BoardHost boardHost) {
+        /* countButtons - the number of buttons. Simon will create a default index for the N buttons of 0 to N-1
+        * Example: if countButtons = 4, indexButtons = {0, 1, 2, 3} */
+        super();
+        if (countButtons == 0) throw new IllegalArgumentException("countButtons 1+");
+        byte[] indexButtons = new byte[countButtons];
+        for (byte i = 0; i < countButtons; i++) {
+            indexButtons[i] = i;
+        }
         this.indexButtons = indexButtons;
         this.boardHost = boardHost;
     }
