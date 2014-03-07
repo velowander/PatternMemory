@@ -12,7 +12,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BoardFragment extends Fragment implements View.OnClickListener, BoardHost {
+public class BoardFragment extends Fragment implements View.OnClickListener, Simon.BoardHost {
     /* This BoardFragment hosts everything to do with managing the board: the game logic class Simon,
     listening to and pressing the buttons via their .setPressed() methods.
     It needs a reference to ScoreBarUpdate but can't accept it via constructor to enable use in an
@@ -154,15 +154,4 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Boa
             }
         }, PLAY_DURATION_MS);
     }
-}
-
-interface BoardHost {
-    public void gameOver();
-
-    public boolean play(List<Byte> playList);
-
-    @SuppressWarnings("unused")
-    public void playOne(byte buttonIndex);
-
-    public void gameMessage(byte MESSAGE_CODE);
 }

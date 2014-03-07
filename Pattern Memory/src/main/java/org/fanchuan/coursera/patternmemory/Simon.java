@@ -163,4 +163,15 @@ class Simon {
             }
         }
     }
+
+    static interface BoardHost {
+        public void gameOver();
+
+        public boolean play(List<Byte> playList);
+
+        @SuppressWarnings("unused")
+        public void playOne(byte buttonIndex);
+
+        public void gameMessage(byte MESSAGE_CODE);
+    }
 }
