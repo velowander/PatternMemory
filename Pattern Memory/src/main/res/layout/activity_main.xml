@@ -1,5 +1,4 @@
-<!-- Simon is a reference to the electronic game from the 1980s
-        No gridlayout before API14, must use LinearLayouts -->
+<!-- Simon is a reference to the electronic game from the 1980s -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
