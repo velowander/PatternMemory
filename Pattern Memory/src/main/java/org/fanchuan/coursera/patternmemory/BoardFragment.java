@@ -15,9 +15,6 @@ import java.util.List;
 public class BoardFragment extends Fragment implements View.OnClickListener, Simon.BoardHost {
     /* This BoardFragment hosts everything to do with managing the board: the game logic class Simon,
     listening to and pressing the buttons via their .setPressed() methods.
-    It needs a reference to ScoreBarUpdate but can't accept it via constructor to enable use in an
-    XML layout; this was a design tradeoff. Pass the ScoreBarUpdate reference in the begin() method which
-    starts the game.
      */
     final int PLAY_DURATION_MS = 600; // How long the computer presses the buttons during playback
     final int PAUSE_DURATION_MS = 200; // How long the computer pauses between playback button presses
