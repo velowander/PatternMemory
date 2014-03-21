@@ -31,7 +31,7 @@ public class ScoreBarFragment extends Fragment implements Observer {
         return inflater.inflate(R.layout.fragment_score_bar, container, false);
     }
 
-    //Interface: observable
+    //Interface: observer
     public void update(Observable observable, Object o) {
         if (observable instanceof Simon.ScoreObservable) {
             byte scoreRequest = ((Simon.ScoreObservable) observable).getRequest();
