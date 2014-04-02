@@ -20,5 +20,4 @@
     <string name="key_large_board">key_large_board</string>
     <string name="setting_large_board">Play on large board</string>
     <string name="setting_large_board_summary">If checked, the board will be 3x2 buttons instead of 2x2 next time the app runs.</string>
-    <string name="title_activity_settings">Settings</string>
 </resources>
