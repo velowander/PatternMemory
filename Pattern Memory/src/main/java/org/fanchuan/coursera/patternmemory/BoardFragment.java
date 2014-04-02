@@ -89,7 +89,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Sim
     public boolean initialize(View rootView) {
         /* BoardFragment must have initialized its root view already; could call in onCreateView AFTER
         inflating the view or in, for example, on ActivityCreated(). Passing the rootView parameter
-        guarantees that the View hierarchy is available, use getView() to get the rootView.
+        guarantees that the View hierarchy is available; the caller can getView() to get the rootView.
         If the parent Activity has a configuration change (e.g. orientation), we need to get all the new Views.
         We only initialize Simon if it is null because "the new" Simon stores button indexes not actual views
         and does not need to be refreshed when the Activity destroys and recreates.
@@ -99,12 +99,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Sim
         try {
             /* If we are running initialize() due to a configuration change, we need to reuse our existing
             * Simon instance which has the state of the current melody but we need to refresh our Views
-            * as the previous Views were destroyed.*/
-            simonButtons = new ArrayList<View>();
-            simonButtons.add(rootView.findViewById(R.id.buttonGreen));
-            simonButtons.add(rootView.findViewById(R.id.buttonRed));
-            simonButtons.add(rootView.findViewById(R.id.buttonBlue));
-            simonButtons.add(rootView.findViewById(R.id.buttonYellow));
+            * as the previous Views were destroyed.
+            * All non-Layout child Views of the supplied rootView are assumed to be melody playing buttons */
+            simonButtons = getNonLayoutChildrenBFS(rootView);
             Log.d(TAG, "Simon initialized with device button count: " + simonButtons.size());
         } catch (Exception e) {
             Log.e(TAG, "Unable to create array of buttons", e);
@@ -151,23 +148,24 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Sim
         }, PLAY_DURATION_MS);
     }
 
-    private List<View> getAllChildrenBFS(View v) {
+    private List<View> getNonLayoutChildrenBFS(View v) {
         /* Iterative method to get all View children using Breadth First Search (BFS)
         http://stackoverflow.com/questions/18668897/android-get-all-children-elements-of-a-viewgroup
-        It returns only the "non ViewGroup" children in the list */
+        I modified it to return only the "non Layout" (ViewGroup) children in the list */
         List<View> visited = new ArrayList<View>();
         List<View> unvisited = new ArrayList<View>();
         unvisited.add(v);
 
         while (!unvisited.isEmpty()) {
             View child = unvisited.remove(0);
-            visited.add(child);
-            if (!(child instanceof ViewGroup)) continue;
+            if (!(child instanceof ViewGroup)) {
+                visited.add(child); //Original version always added the child to the visited list
+                continue;
+            }
             ViewGroup group = (ViewGroup) child;
             final int childCount = group.getChildCount();
             for (int i = 0; i < childCount; i++) unvisited.add(group.getChildAt(i));
         }
-
         return visited;
     }
 }
