@@ -40,7 +40,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Sim
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (!initialize()) {
+        if (!initialize(getView())) {
             Log.e(TAG, "Simon is not available");
             Toast.makeText(getActivity(), getActivity().getString(R.string.initialization_error), Toast.LENGTH_SHORT).show();
         }
@@ -86,12 +86,13 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Sim
         return simon.getScoreObservable();
     }
 
-    public boolean initialize() {
+    public boolean initialize(View rootView) {
         /* BoardFragment must have initialized its root view already; could call in onCreateView AFTER
-        inflating the view or in, for example, on ActivityCreated(). If the parent Activity has a configuration
-        change (e.g. orientation), we need to get all the new Views. We only initialize Simon if it is null
-        because "the new" Simon stores button indexes not actual views and does not need to be refreshed when
-        the Activity destroys and recreates.
+        inflating the view or in, for example, on ActivityCreated(). Passing the rootView parameter
+        guarantees that the View hierarchy is available, use getView() to get the rootView.
+        If the parent Activity has a configuration change (e.g. orientation), we need to get all the new Views.
+        We only initialize Simon if it is null because "the new" Simon stores button indexes not actual views
+        and does not need to be refreshed when the Activity destroys and recreates.
         Return false if initialization fails, true otherwise
          */
 
@@ -100,10 +101,10 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Sim
             * Simon instance which has the state of the current melody but we need to refresh our Views
             * as the previous Views were destroyed.*/
             simonButtons = new ArrayList<View>();
-            simonButtons.add(getView().findViewById(R.id.buttonGreen));
-            simonButtons.add(getView().findViewById(R.id.buttonRed));
-            simonButtons.add(getView().findViewById(R.id.buttonBlue));
-            simonButtons.add(getView().findViewById(R.id.buttonYellow));
+            simonButtons.add(rootView.findViewById(R.id.buttonGreen));
+            simonButtons.add(rootView.findViewById(R.id.buttonRed));
+            simonButtons.add(rootView.findViewById(R.id.buttonBlue));
+            simonButtons.add(rootView.findViewById(R.id.buttonYellow));
             Log.d(TAG, "Simon initialized with device button count: " + simonButtons.size());
         } catch (Exception e) {
             Log.e(TAG, "Unable to create array of buttons", e);
@@ -148,5 +149,25 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Sim
                 VW.setPressed(false);
             }
         }, PLAY_DURATION_MS);
+    }
+
+    private List<View> getAllChildrenBFS(View v) {
+        /* Iterative method to get all View children using Breadth First Search (BFS)
+        http://stackoverflow.com/questions/18668897/android-get-all-children-elements-of-a-viewgroup
+        It returns only the "non ViewGroup" children in the list */
+        List<View> visited = new ArrayList<View>();
+        List<View> unvisited = new ArrayList<View>();
+        unvisited.add(v);
+
+        while (!unvisited.isEmpty()) {
+            View child = unvisited.remove(0);
+            visited.add(child);
+            if (!(child instanceof ViewGroup)) continue;
+            ViewGroup group = (ViewGroup) child;
+            final int childCount = group.getChildCount();
+            for (int i = 0; i < childCount; i++) unvisited.add(group.getChildAt(i));
+        }
+
+        return visited;
     }
 }
