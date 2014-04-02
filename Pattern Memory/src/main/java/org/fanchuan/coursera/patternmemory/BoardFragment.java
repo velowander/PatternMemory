@@ -18,13 +18,11 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Sim
      */
     final int PLAY_DURATION_MS = 600; // How long the computer presses the buttons during playback
     final int PAUSE_DURATION_MS = 200; // How long the computer pauses between playback button presses
-
+    private final Handler handlerPlay = new Handler();
     private String TAG = BoardFragment.class.getSimpleName();
     private List<View> simonButtons;
     private Simon simon;
-    private final Handler handlerPlay = new Handler();
 
-    //Class: v4.app.Fragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

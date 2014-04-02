@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TableRow android:layout_weight="0.5">
+
+        <Button
+            android:id="@+id/buttonYellow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:background="@drawable/button_yellow" />
+
+        <Button
+            android:id="@+id/buttonBlue"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:background="@drawable/button_blue" />
+    </TableRow>
+
+    <TableRow android:layout_weight="0.5">
+
+        <Button
+            android:id="@+id/buttonGreen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:background="@drawable/button_green" />
+
+        <Button
+            android:id="@+id/buttonRed"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:background="@drawable/button_red" />
+    </TableRow>
+
+    <TableRow android:layout_weight="0.5">
+
+        <Button
+            android:id="@+id/buttonViolet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:background="@drawable/button_violet" />
+
+        <Button
+            android:id="@+id/buttonOrange"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:background="@drawable/button_orange" />
+    </TableRow>
+</TableLayout>

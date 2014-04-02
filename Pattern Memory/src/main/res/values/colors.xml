@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="redFaint">#40FF0000</color>
+    <color name="red_faint">#40FF0000</color>
     <color name="red">#FFFF0000</color>
-    <color name="greenFaint">#4000FF00</color>
+    <color name="green_faint">#4000FF00</color>
     <color name="green">#FF00FF00</color>
-    <color name="blueFaint">#400000FF</color>
+    <color name="blue_faint">#400000FF</color>
     <color name="blue">#FF0000FF</color>
-    <color name="yellowFaint">#40FFFF00</color>
+    <color name="yellow_faint">#40FFFF00</color>
     <color name="yellow">#FFFFFF00</color>
+    <!-- Extra colors for 3 x 2 board -->
+    <color name="orange_faint">#40FFA500</color>
+    <color name="orange">#FFFFA500</color>
+    <color name="violet_faint">#408F00FF</color>
+    <color name="violet">#FF8F00FF</color>
+
+
 </resources>
