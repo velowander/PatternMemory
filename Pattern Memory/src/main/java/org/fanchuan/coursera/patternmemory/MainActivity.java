@@ -34,10 +34,6 @@ public class MainActivity extends ActionBarActivity {
         ScoreBarFragment scoreBarFragment = (ScoreBarFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_score_bar);
         BoardFragment boardFragment = (BoardFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_board);
         boardFragment.getScoreObservable().addObserver(scoreBarFragment);
-        //GameBeginListener waits for user to press Begin Game button
-        View vwBeginGame = findViewById(R.id.buttonBegin);
-        vwBeginGame.setOnClickListener(new BeginGameListener());
-        Log.v(TAG, MainActivity.class.getSimpleName() + " onStart");
     }
 
     @Override
@@ -53,6 +49,14 @@ public class MainActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
+            case R.id.action_begin:
+                Log.d(TAG, MainActivity.class.getSimpleName() + " onClickBeginGame");
+                try {
+                    ((BoardFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_board)).begin();
+                } catch (Exception e) {
+                    Log.e(TAG, "BeginGameListener onClick Exception", e);
+                }
+                break;
             case R.id.action_help:
                 final AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(R.string.help_title);
@@ -60,7 +64,7 @@ public class MainActivity extends ActionBarActivity {
                 builder.setPositiveButton(android.R.string.ok, null);
                 builder.show();
                 break;
-            case R.id.action_settings:
+            case R.id.action_options:
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
                 break;
@@ -113,18 +117,6 @@ public class MainActivity extends ActionBarActivity {
                                      Bundle savedInstanceState) {
                 this.addPreferencesFromResource(R.xml.preferences);
                 return super.onCreateView(inflater, container, savedInstanceState);
-            }
-        }
-    }
-
-    public class BeginGameListener implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            Log.d(TAG, MainActivity.class.getSimpleName() + " onClickBeginGame");
-            try {
-                ((BoardFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_board)).begin();
-            } catch (Exception e) {
-                Log.e(TAG, "BeginGameListener onClick Exception", e);
             }
         }
     }

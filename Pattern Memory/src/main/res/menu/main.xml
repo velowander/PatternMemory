@@ -4,15 +4,18 @@
     tools:context="org.fanchuan.coursera.patternmemory.MainActivity">
 
     <item
-        android:id="@+id/action_help"
-        android:orderInCategory="0"
-        android:title="@string/help_button"
-        app:showAsAction="ifRoom" />
+        android:id="@+id/action_begin"
+        android:title="@string/action_begin"
+        app:showAsAction="always" />
 
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:id="@+id/action_options"
+        android:title="@string/action_options"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_help"
+        android:title="@string/action_help"
         app:showAsAction="never" />
 
 </menu>
