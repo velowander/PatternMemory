@@ -1,7 +1,9 @@
 package org.fanchuan.coursera.patternmemory;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,7 +36,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Sim
                              Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_board_2x2, container, false);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        boolean largeBoard = prefs.getBoolean(getString(R.string.key_large_board), false);
+        return largeBoard ? inflater.inflate(R.layout.fragment_board_3x2, container, false) : inflater.inflate(R.layout.fragment_board_2x2, container, false);
     }
 
     @Override
