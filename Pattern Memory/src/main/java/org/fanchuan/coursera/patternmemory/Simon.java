@@ -57,7 +57,7 @@ class Simon {
         /* Start the game, start generating random notes and watching the keys to match to the playList */
         gameOn = true;
         scoreObservable.sendRequest(ScoreObservable.RESET_SCORE);
-        playList = new ArrayList<Byte>();
+        playList = new ArrayList<>();
         playListIterator = playList.iterator();
         noteRandomAdd();
         boardHost.play(playList);
@@ -139,7 +139,18 @@ class Simon {
         The verification is very simple, just a comparison. We check .hasNext to make sure the user doesn't
         type too many keys - automatic fail during the game.
         Return true if part of melody, false otherwise */
-        return playListIterator.hasNext() && indexButton == playListIterator.next();
+        return playListIterator.hasNext() && indexButton == (Byte) playListIterator.next();
+    }
+
+    static interface BoardHost {
+        public void gameOver();
+
+        public boolean play(List<Byte> playList);
+
+        @SuppressWarnings("unused")
+        public void playOne(byte buttonIndex);
+
+        public void gameMessage(byte MESSAGE_CODE);
     }
 
     public class ScoreObservable extends Observable {
@@ -162,16 +173,5 @@ class Simon {
                 notifyObservers();
             }
         }
-    }
-
-    static interface BoardHost {
-        public void gameOver();
-
-        public boolean play(List<Byte> playList);
-
-        @SuppressWarnings("unused")
-        public void playOne(byte buttonIndex);
-
-        public void gameMessage(byte MESSAGE_CODE);
     }
 }
